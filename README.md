@@ -70,12 +70,91 @@ cd /path/to/true-recall-base
 ./install.sh
 ```
 
-The installer will prompt for:
-- Qdrant IP (default: localhost)
-- Ollama IP (default: localhost)
-- User ID (default: user)
+#### What the Installer Does (Step-by-Step)
 
-Then automatically configures and starts the service.
+The `install.sh` script automates the entire setup process. Here's exactly what happens:
+
+**Step 1: Interactive Configuration**
+```
+Configuration (press Enter for defaults):
+
+Examples:
+  Qdrant:  10.0.0.40:6333  (remote)  or  localhost:6333  (local)
+  Ollama:  10.0.0.10:11434 (remote)  or  localhost:11434 (local)
+
+Qdrant host:port [localhost:6333]: _
+Ollama host:port [localhost:11434]: _
+User ID [user]: _
+```
+- Prompts for Qdrant host:port (default: `localhost:6333`)
+- Prompts for Ollama host:port (default: `localhost:11434`)
+- Prompts for User ID (default: `user`)
+- Press Enter to accept defaults, or type custom values
+
+**Step 2: Configuration Confirmation**
+```
+Configuration:
+  Qdrant: http://localhost:6333
+  Ollama: http://localhost:11434
+  User ID: user
+
+Proceed? [Y/n]: _
+```
+- Shows the complete configuration
+- Asks for confirmation (type `n` to cancel, Enter or `Y` to proceed)
+- Exits cleanly if cancelled, no changes made
+
+**Step 3: Systemd Service Generation**
+- Creates a temporary service file at `/tmp/mem-qdrant-watcher.service`
+- Inserts your configuration values (IPs, ports, user ID)
+- Uses absolute path for the script location (handles spaces in paths)
+- Sets up automatic restart on failure
+
+**Step 4: Service Installation**
+```bash
+sudo cp /tmp/mem-qdrant-watcher.service /etc/systemd/system/
+sudo systemctl daemon-reload
+```
+- Copies the service file to systemd directory
+- Reloads systemd to recognize the new service
+
+**Step 5: Service Activation**
+```bash
+sudo systemctl enable --now mem-qdrant-watcher
+```
+- Enables the service to start on boot (`enable`)
+- Starts the service immediately (`now`)
+
+**Step 6: Verification**
+```
+==========================================
+Installation Complete!
+==========================================
+
+Status:
+● mem-qdrant-watcher.service - TrueRecall Base...
+   Active: active (running)
+```
+- Displays the service status
+- Shows it's active and running
+- Provides commands to verify and monitor
+
+**Post-Installation Commands:**
+```bash
+# Check service status anytime
+sudo systemctl status mem-qdrant-watcher
+
+# View live logs
+sudo journalctl -u mem-qdrant-watcher -f
+
+# Verify Qdrant collection
+curl -s http://localhost:6333/collections/memories_tr | jq '.result.points_count'
+```
+
+#### Installer Requirements
+- Must run as root or with sudo (for systemd operations)
+- Must have execute permissions (`chmod +x install.sh`)
+- Script must be run from the true-recall-base directory
 
 ### Option 2: Manual Install
 
