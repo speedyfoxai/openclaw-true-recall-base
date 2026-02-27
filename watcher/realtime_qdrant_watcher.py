@@ -3,7 +3,7 @@
 TrueRecall Base - Real-time Qdrant Watcher
 Monitors OpenClaw sessions and stores to memories_tr instantly.
 
-This is the CAPTURE component. For curation and injection, install v2.
+This is the CAPTURE component. For curation and injection, install Gems or Blocks addon.
 """
 
 import os

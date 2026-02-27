@@ -106,14 +106,11 @@ Edit `config.json` or set environment variables:
 
 ## Next Step
 
-Install **TrueRecall v2** for curation and injection:
+Install an **addon** for curation and injection:
 
-```bash
-# v2 adds:
-# - Curator (extracts gems from memories)
-# - Injection (recalls gems into context)
-```
+| Addon | Purpose |
+|-------|---------|
+| **Gems** | Extracts atomic gems from memories, injects into context |
+| **Blocks** | Topic clustering, contextual block retrieval |
 
-v2 requires Base to be running first.
-
-**Prerequisite for:** TrueRecall v2
+**Prerequisite for:** TrueRecall Gems, TrueRecall Blocks
