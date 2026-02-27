@@ -1,0 +1,19 @@
+[Unit]
+Description=TrueRecall Base - Real-Time Memory Watcher
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/.openclaw/workspace/.local_projects/true-recall-base/watcher
+Environment="QDRANT_URL=http://10.0.0.40:6333"
+Environment="QDRANT_COLLECTION=memories_tr"
+Environment="OLLAMA_URL=http://10.0.0.10:11434"
+Environment="EMBEDDING_MODEL=snowflake-arctic-embed2"
+Environment="USER_ID=rob"
+ExecStart=/usr/bin/python3 /root/.openclaw/workspace/.local_projects/true-recall-base/watcher/realtime_qdrant_watcher.py --daemon
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

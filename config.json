@@ -1,0 +1,12 @@
+{
+  "version": "1.0",
+  "description": "TrueRecall v1 - Memory capture only",
+  "components": ["watcher"],
+  "collections": {
+    "memories": "memories_tr"
+  },
+  "qdrant_url": "http://10.0.0.40:6333",
+  "ollama_url": "http://10.0.0.10:11434",
+  "embedding_model": "snowflake-arctic-embed2",
+  "user_id": "rob"
+}
