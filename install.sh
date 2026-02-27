@@ -45,6 +45,9 @@ fi
 echo ""
 echo "Creating systemd service..."
 
+# Get absolute path (handles spaces)
+INSTALL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 cat > /tmp/mem-qdrant-watcher.service << EOF
 [Unit]
 Description=TrueRecall Base - Real-Time Memory Watcher
@@ -53,13 +56,13 @@ After=network.target
 [Service]
 Type=simple
 User=$USER
-WorkingDirectory=$(pwd)/watcher
+WorkingDirectory=$INSTALL_DIR/watcher
 Environment="QDRANT_URL=http://$QDRANT_IP:6333"
 Environment="QDRANT_COLLECTION=memories_tr"
 Environment="OLLAMA_URL=http://$OLLAMA_IP:11434"
 Environment="EMBEDDING_MODEL=snowflake-arctic-embed2"
 Environment="USER_ID=$USER_ID"
-ExecStart=/usr/bin/python3 $(pwd)/watcher/realtime_qdrant_watcher.py --daemon
+ExecStart=/usr/bin/python3 $INSTALL_DIR/watcher/realtime_qdrant_watcher.py --daemon
 Restart=always
 RestartSec=5
 
