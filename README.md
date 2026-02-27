@@ -75,8 +75,8 @@ sudo systemctl enable --now mem-qdrant-watcher
 # Check service
 sudo systemctl status mem-qdrant-watcher
 
-# Check collection
-curl -s http://10.0.0.40:6333/collections/memories_tr | jq '.result.points_count'
+# Check collection (replace <QDRANT_IP> with your Qdrant IP)
+curl -s http://<QDRANT_IP>:6333/collections/memories_tr | jq '.result.points_count'
 ```
 
 ---
@@ -97,10 +97,10 @@ Edit `config.json` or set environment variables:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `QDRANT_URL` | `http://10.0.0.40:6333` | Qdrant endpoint |
-| `OLLAMA_URL` | `http://10.0.0.10:11434` | Ollama endpoint |
+| `QDRANT_URL` | `http://<QDRANT_IP>:6333` | Qdrant endpoint |
+| `OLLAMA_URL` | `http://<OLLAMA_IP>:11434` | Ollama endpoint |
 | `EMBEDDING_MODEL` | `snowflake-arctic-embed2` | Embedding model |
-| `USER_ID` | `rob` | User identifier |
+| `USER_ID` | `<USER_ID>` | User identifier |
 
 ---
 
