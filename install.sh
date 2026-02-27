@@ -11,20 +11,22 @@ echo "=========================================="
 echo ""
 
 # Default values
-DEFAULT_QDRANT_IP="localhost"
-DEFAULT_OLLAMA_IP="localhost"
+DEFAULT_QDRANT_IP="localhost:6333"
+DEFAULT_OLLAMA_IP="localhost:11434"
 DEFAULT_USER_ID="user"
 
 # Get user input with defaults
 echo "Configuration (press Enter for defaults):"
 echo ""
-echo "Examples: localhost, 10.0.0.40, 192.168.1.10"
+echo "Examples:"
+echo "  Qdrant:  10.0.0.40:6333  (remote)  or  localhost:6333  (local)"
+echo "  Ollama:  10.0.0.10:11434 (remote)  or  localhost:11434 (local)"
 echo ""
 
-read -p "Qdrant IP (port 6333) [$DEFAULT_QDRANT_IP]: " QDRANT_IP
+read -p "Qdrant host:port [$DEFAULT_QDRANT_IP]: " QDRANT_IP
 QDRANT_IP=${QDRANT_IP:-$DEFAULT_QDRANT_IP}
 
-read -p "Ollama IP (port 11434) [$DEFAULT_OLLAMA_IP]: " OLLAMA_IP
+read -p "Ollama host:port [$DEFAULT_OLLAMA_IP]: " OLLAMA_IP
 OLLAMA_IP=${OLLAMA_IP:-$DEFAULT_OLLAMA_IP}
 
 read -p "User ID [$DEFAULT_USER_ID]: " USER_ID
@@ -32,8 +34,8 @@ USER_ID=${USER_ID:-$DEFAULT_USER_ID}
 
 echo ""
 echo "Configuration:"
-echo "  Qdrant: http://$QDRANT_IP:6333"
-echo "  Ollama: http://$OLLAMA_IP:11434"
+echo "  Qdrant: http://$QDRANT_IP"
+echo "  Ollama: http://$OLLAMA_IP"
 echo "  User ID: $USER_ID"
 echo ""
 
@@ -59,9 +61,9 @@ After=network.target
 Type=simple
 User=$USER
 WorkingDirectory=$INSTALL_DIR/watcher
-Environment="QDRANT_URL=http://$QDRANT_IP:6333"
+Environment="QDRANT_URL=http://$QDRANT_IP"
 Environment="QDRANT_COLLECTION=memories_tr"
-Environment="OLLAMA_URL=http://$OLLAMA_IP:11434"
+Environment="OLLAMA_URL=http://$OLLAMA_IP"
 Environment="EMBEDDING_MODEL=snowflake-arctic-embed2"
 Environment="USER_ID=$USER_ID"
 ExecStart=/usr/bin/python3 $INSTALL_DIR/watcher/realtime_qdrant_watcher.py --daemon
@@ -90,7 +92,7 @@ sudo systemctl status mem-qdrant-watcher --no-pager
 
 echo ""
 echo "Verify collection:"
-echo "  curl -s http://$QDRANT_IP:6333/collections/memories_tr | jq '.result.points_count'"
+echo "  curl -s http://$QDRANT_IP/collections/memories_tr | jq '.result.points_count'"
 echo ""
 echo "View logs:"
 echo "  sudo journalctl -u mem-qdrant-watcher -f"
