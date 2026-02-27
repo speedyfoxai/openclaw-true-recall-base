@@ -63,26 +63,43 @@ Choose one: Gems OR Blocks (not both).
 
 ## Quick Start
 
-### 1. Install
+### Option 1: Quick Install (Recommended)
 
 ```bash
-cd /root/.openclaw/workspace/.local_projects/true-recall-base
+cd /path/to/true-recall-base
+./install.sh
+```
+
+The installer will prompt for:
+- Qdrant IP (default: localhost)
+- Ollama IP (default: localhost)
+- User ID (default: user)
+
+Then automatically configures and starts the service.
+
+### Option 2: Manual Install
+
+```bash
+cd /path/to/true-recall-base
 
 # Copy service file
 sudo cp watcher/mem-qdrant-watcher.service /etc/systemd/system/
+
+# Edit the service file to set your IPs and user
+sudo nano /etc/systemd/system/mem-qdrant-watcher.service
 
 # Reload and start
 sudo systemctl daemon-reload
 sudo systemctl enable --now mem-qdrant-watcher
 ```
 
-### 2. Verify
+### Verify Installation
 
 ```bash
-# Check service
+# Check service status
 sudo systemctl status mem-qdrant-watcher
 
-# Check collection (replace <QDRANT_IP> with your Qdrant IP)
+# Check collection
 curl -s http://<QDRANT_IP>:6333/collections/memories_tr | jq '.result.points_count'
 ```
 
