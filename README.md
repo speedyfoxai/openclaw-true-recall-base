@@ -379,7 +379,23 @@ User asks about X → Search q for X → Use retrieved memories → Answer
 
 ## Next Step
 
-Install an **addon** for curation and injection:
+### ✅ Base is Complete
+
+**You don't need to upgrade.** TrueRecall Base is a **fully functional, standalone memory system**. If you're happy with real-time capture and manual search via the `q` command, you can stop here.
+
+Base gives you:
+- ✅ Complete conversation history in Qdrant
+- ✅ Semantic search via `search q <topic>`
+- ✅ Full-text search capabilities
+- ✅ Permanent storage of all conversations
+
+**Upgrade only if** you want automatic context injection into prompts.
+
+---
+
+### Optional Addons
+
+Install an **addon** for automatic curation and injection:
 
 | Addon | Purpose | Status |
 |-------|---------|--------|
