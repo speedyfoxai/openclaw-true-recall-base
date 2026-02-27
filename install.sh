@@ -18,11 +18,13 @@ DEFAULT_USER_ID="user"
 # Get user input with defaults
 echo "Configuration (press Enter for defaults):"
 echo ""
+echo "Examples: localhost, 10.0.0.40, 192.168.1.10"
+echo ""
 
-read -p "Qdrant IP [$DEFAULT_QDRANT_IP]: " QDRANT_IP
+read -p "Qdrant IP (port 6333) [$DEFAULT_QDRANT_IP]: " QDRANT_IP
 QDRANT_IP=${QDRANT_IP:-$DEFAULT_QDRANT_IP}
 
-read -p "Ollama IP [$DEFAULT_OLLAMA_IP]: " OLLAMA_IP
+read -p "Ollama IP (port 11434) [$DEFAULT_OLLAMA_IP]: " OLLAMA_IP
 OLLAMA_IP=${OLLAMA_IP:-$DEFAULT_OLLAMA_IP}
 
 read -p "User ID [$DEFAULT_USER_ID]: " USER_ID
