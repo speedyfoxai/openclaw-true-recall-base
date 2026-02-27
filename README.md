@@ -21,6 +21,24 @@ This is **required** for both addons: **Gems** and **Blocks**.
 
 ---
 
+## Requirements
+
+**Vector Database**
+
+TrueRecall Base requires a vector database to store conversation embeddings. This can be:
+- **Local** - Self-hosted Qdrant (recommended for privacy)
+- **Cloud** - Managed Qdrant Cloud or similar service
+- **Any IP-accessible** Qdrant instance
+
+In this version, we use a **local Qdrant database** (`http://<QDRANT_IP>:6333`). The database must be reachable from the machine running the watcher daemon.
+
+**Additional Requirements:**
+- **Ollama** - For generating text embeddings (local or remote)
+- **OpenClaw** - The session files to monitor
+- **Linux systemd** - For running the watcher as a service
+
+---
+
 ## Three-Tier Architecture
 
 ```
