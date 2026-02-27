@@ -17,17 +17,6 @@ This is **required** for both addons: **Gems** and **Blocks**.
 - ❌ Topic clustering (blocks)
 - ❌ Injection (context recall)
 
-**Features:**
-- ✅ Full context conversations saved (not just summaries)
-- ✅ Automatically stripped of markdown, tables, and extra characters
-- ✅ Fully searchable via semantic + exact match
-- ✅ Compatible with other AI tools and agents
-
-**Base does NOT include:**
-- ❌ Curation (gem extraction)
-- ❌ Topic clustering (blocks)
-- ❌ Injection (context recall)
-
 **For those features, install an addon after base.**
 
 ---
@@ -108,9 +97,43 @@ Edit `config.json` or set environment variables:
 
 Install an **addon** for curation and injection:
 
-| Addon | Purpose |
-|-------|---------|
-| **Gems** | Extracts atomic gems from memories, injects into context |
-| **Blocks** | Topic clustering, contextual block retrieval |
+| Addon | Purpose | Status |
+|-------|---------|--------|
+| **Gems** | Extracts atomic gems from memories, injects into context | 🚧 Coming Soon |
+| **Blocks** | Topic clustering, contextual block retrieval | 🚧 Coming Soon |
+
+### Upgrade Paths
+
+Once Base is running, you have two upgrade options:
+
+#### Option 1: Gems (Atomic Memory)
+**Best for:** Conversational context, quick recall
+
+- **Curator** extracts "gems" (key insights) from `memories_tr`
+- Stores curated gems in `gems_tr` collection
+- **Injection plugin** recalls relevant gems into prompts automatically
+- Optimized for: Chat assistants, help bots, personal memory
+
+**Workflow:**
+```
+memories_tr → Curator → gems_tr → Injection → Context
+```
+
+#### Option 2: Blocks (Topic Clustering)
+**Best for:** Document organization, topic-based retrieval
+
+- Clusters conversations by topic automatically
+- Creates `topic_blocks_tr` collection
+- Retrieves entire contextual blocks on query
+- Optimized for: Knowledge bases, document systems
+
+**Workflow:**
+```
+memories_tr → Topic Engine → topic_blocks_tr → Retrieval → Context
+```
+
+**Note:** Gems and Blocks are **independent** addons. They both require Base, but you choose one based on your use case.
+
+---
 
 **Prerequisite for:** TrueRecall Gems, TrueRecall Blocks
