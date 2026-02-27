@@ -70,11 +70,18 @@ echo "$ALL_RESULTS" | jq -r '
     .[] | 
     "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
     "📅 " + (.payload.timestamp | split("T") | join(" ")) + "\n" +
-    "👤 " + .payload.role + "\n" +
-    "📝 " + (.payload.content | if length > 200 then .[0:200] + "..." else . end) + "\n"
-' 2>/dev/null || echo "No results found for '$QUERY'"
+    "👤 " + .payload.role + " | User: " + .payload.user_id + "\n" +
+    "📝 " + (.payload.content | if length > 250 then .[0:250] + "..." else . end) + "\n"
+' 2>/dev/null | tee /tmp/search_results.txt
+
+# Count results
+RESULT_COUNT=$(cat /tmp/search_results.txt | grep -c "━━━━━━━━" 2>/dev/null || echo "0")
 
 echo ""
 echo "=========================================="
-echo "Search complete. Most recent results shown first."
+if [ "$RESULT_COUNT" -gt 0 ]; then
+    echo "Found $RESULT_COUNT result(s). Most recent shown first."
+else
+    echo "No results found for '$QUERY'"
+fi
 echo "=========================================="
