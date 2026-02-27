@@ -1,4 +1,4 @@
-# TrueRecall Base
+# TrueRecall Base (v1)
 
 **Purpose:** Real-time memory capture → Qdrant `memories_tr`
 
