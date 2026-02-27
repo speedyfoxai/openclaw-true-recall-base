@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "description": "TrueRecall v1 - Memory capture only",
+  "description": "TrueRecall Base - Memory capture",
   "components": ["watcher"],
   "collections": {
     "memories": "memories_tr"

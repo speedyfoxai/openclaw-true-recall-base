@@ -1,4 +1,4 @@
-# TrueRecall Base (v1)
+# TrueRecall Base
 
 **Purpose:** Real-time memory capture → Qdrant `memories_tr`
 
@@ -11,6 +11,11 @@
 TrueRecall Base is the **foundation**. It watches OpenClaw sessions in real-time and stores every turn to Qdrant's `memories_tr` collection.
 
 This is **required** for both addons: **Gems** and **Blocks**.
+
+**Base does NOT include:**
+- ❌ Curation (gem extraction)
+- ❌ Topic clustering (blocks)
+- ❌ Injection (context recall)
 
 **Features:**
 - ✅ Full context conversations saved (not just summaries)
@@ -82,7 +87,7 @@ curl -s http://10.0.0.40:6333/collections/memories_tr | jq '.result.points_count
 |------|---------|
 | `watcher/realtime_qdrant_watcher.py` | Capture daemon |
 | `watcher/mem-qdrant-watcher.service` | Systemd service |
-| `config.json` | v1 configuration |
+| `config.json` | Configuration template |
 
 ---
 
@@ -109,9 +114,6 @@ Install **TrueRecall v2** for curation and injection:
 # - Injection (recalls gems into context)
 ```
 
-v2 requires v1 to be running first.
+v2 requires Base to be running first.
 
----
-
-**Version:** 1.0  
 **Prerequisite for:** TrueRecall v2

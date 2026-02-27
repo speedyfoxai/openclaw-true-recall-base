@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-TrueRecall v1 - Real-time Qdrant Watcher
+TrueRecall Base - Real-time Qdrant Watcher
 Monitors OpenClaw sessions and stores to memories_tr instantly.
 
 This is the CAPTURE component. For curation and injection, install v2.
@@ -263,7 +263,7 @@ def watch_loop(dry_run: bool = False):
 def main():
     global USER_ID
     
-    parser = argparse.ArgumentParser(description="TrueRecall v1 - Real-time Memory Capture")
+    parser = argparse.ArgumentParser(description="TrueRecall Base - Real-time Memory Capture")
     parser.add_argument("--daemon", "-d", action="store_true", help="Run as daemon")
     parser.add_argument("--once", "-o", action="store_true", help="Process once then exit")
     parser.add_argument("--dry-run", "-n", action="store_true", help="Don't write to Qdrant")
@@ -277,7 +277,7 @@ def main():
     if args.user_id:
         USER_ID = args.user_id
     
-    print(f"🔍 TrueRecall v1 - Real-time Memory Capture")
+    print(f"🔍 TrueRecall Base - Real-time Memory Capture")
     print(f"📍 Qdrant: {QDRANT_URL}/{QDRANT_COLLECTION}")
     print(f"🧠 Ollama: {OLLAMA_URL}/{EMBEDDING_MODEL}")
     print(f"👤 User: {USER_ID}")
