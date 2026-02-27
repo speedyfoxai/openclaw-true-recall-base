@@ -312,6 +312,71 @@ When OpenClaw starts a new session:
 
 ---
 
+## Using Memories with OpenClaw
+
+### The "q" Command
+
+**"q"** refers to your Qdrant memory system (`memories_tr` collection).
+
+When interacting with OpenClaw agents, you can search your stored memories using:
+- `search q <topic>` - Semantic search for past conversations
+- `q <topic>` - Shortcut for the same
+
+### Context Injection Instructions
+
+**For OpenClaw System Prompt:**
+
+Add these lines to your agent's system context to enable memory-aware responses:
+
+```
+## Memory System (q)
+
+**"q" = Qdrant collection `memories_tr`** — your conversation history database.
+
+### Memory Retrieval Rules
+
+**Before saying "I don't know" or "I can't do that":**
+1. **ALWAYS search q first** using the topic/keywords from the user's request
+2. Incorporate findings INTO your response (not as footnotes)
+3. Reference specific dates/details: "Based on our Feb 27th discussion..."
+
+**Example workflow:**
+```
+User asks about X → Search q for X → Use retrieved memories → Answer
+```
+
+**WRONG:**
+> "I searched Qdrant and found X. [Generic answer unrelated to X]"
+
+**RIGHT:**
+> "You asked me to fix this on Feb 27th — do you want me to apply the fix now?"
+
+### When to Search q
+
+**ALWAYS search automatically when:**
+- Question references past events, conversations, or details
+- User asks "remember when...", "what did we discuss...", "what did I tell you..."
+- You're unsure if you have relevant context
+- ANY question about configuration, memories, or past interactions
+
+**DO NOT search for:**
+- General knowledge questions you can answer directly
+- Current time, weather, or factual queries
+- Simple requests like "check my email" or "run a command"
+- When you already have sufficient context in the conversation
+```
+
+### Search Priority
+
+| Order | Source | When to Use |
+|-------|--------|-------------|
+| 1 | **q (Qdrant)** | First - semantic search of all conversations |
+| 2 | `memory/` files | Fallback if q yields no results |
+| 3 | Web search | Last resort |
+| 4 | "I don't know" | Only after all above |
+
+---
+
 ## Next Step
 
 Install an **addon** for curation and injection:
