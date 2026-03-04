@@ -1,12 +1,14 @@
 {
-  "version": "1.0",
-  "description": "TrueRecall Base - Memory capture",
+  "version": "1.2",
+  "description": "OpenClaw TrueRecall Base v1.2 - Real-time memory capture with priority-based session detection",
   "components": ["watcher"],
   "collections": {
     "memories": "memories_tr"
   },
-  "qdrant_url": "http://<QDRANT_IP>:6333",
-  "ollama_url": "http://<OLLAMA_IP>:11434",
+  "qdrant_url": "http://10.0.0.40:6333",
+  "ollama_url": "http://localhost:11434",
   "embedding_model": "snowflake-arctic-embed2",
-  "user_id": "<USER_ID>"
+  "embedding_dimensions": 1024,
+  "user_id": "rob",
+  "notes": "Ensure memories_tr collection is created with size=1024 for snowflake-arctic-embed2"
 }

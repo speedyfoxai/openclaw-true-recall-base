@@ -111,7 +111,7 @@ def store_to_qdrant(turn: Dict[str, Any], dry_run: bool = False) -> bool:
         "turn": turn['turn'],
         "timestamp": turn.get('timestamp', datetime.now(timezone.utc).isoformat()),
         "date": datetime.now(timezone.utc).strftime('%Y-%m-%d'),
-        "source": "true-recall-base",
+        "source": "openclaw-true-recall-base",
         "curated": False
     }
     
