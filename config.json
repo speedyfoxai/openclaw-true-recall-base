@@ -1,12 +1,12 @@
 {
   "version": "1.0",
-  "description": "TrueRecall v1 - Memory capture only",
+  "description": "TrueRecall Base - Memory capture",
   "components": ["watcher"],
   "collections": {
     "memories": "memories_tr"
   },
-  "qdrant_url": "http://10.0.0.40:6333",
-  "ollama_url": "http://10.0.0.10:11434",
+  "qdrant_url": "http://<QDRANT_IP>:6333",
+  "ollama_url": "http://<OLLAMA_IP>:11434",
   "embedding_model": "snowflake-arctic-embed2",
-  "user_id": "rob"
+  "user_id": "<USER_ID>"
 }
