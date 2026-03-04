@@ -39,6 +39,17 @@ In this version, we use a **local Qdrant database** (`http://<QDRANT_IP>:6333`).
 
 ---
 
+## Gotchas & Known Limitations
+
+> ⚠️ **Embedding Dimensions:** `snowflake-arctic-embed2` outputs **1024 dimensions**, not 768. Ensure your Qdrant collection is configured with `"size": 1024`.
+
+> ⚠️ **Hardcoded Sessions Path:** `SESSIONS_DIR` is hardcoded to `/root/.openclaw/agents/main/sessions`. To use a different path, modify `realtime_qdrant_watcher.py` to read from an environment variable:
+> ```python
+> SESSIONS_DIR = Path(os.getenv("OPENCLAW_SESSIONS_DIR", "/root/.openclaw/agents/main/sessions"))
+> ```
+
+---
+
 ## Three-Tier Architecture
 
 ```
@@ -246,6 +257,8 @@ The watcher monitors OpenClaw session files in real-time:
 SESSIONS_DIR = Path("/root/.openclaw/agents/main/sessions")
 ```
 
+> ⚠️ **Known Limitation:** `SESSIONS_DIR` is currently hardcoded. To use a different path, patch the watcher script to read from an environment variable (e.g., `os.getenv("OPENCLAW_SESSIONS_DIR", "/root/.openclaw/agents/main/sessions")`).
+
 **What happens:**
 - Uses `inotify` or polling to watch the sessions directory
 - Automatically detects the most recently modified `.jsonl` file
@@ -327,7 +340,7 @@ def get_embedding(text: str) -> List[float]:
 **What happens:**
 - Sends text to Ollama API (10.0.0.10:11434)
 - Uses `snowflake-arctic-embed2` model
-- Returns 768-dimensional vector
+- Returns **1024-dimensional vector** (not 768)
 - Falls back gracefully if Ollama is unavailable
 
 #### Step 5: Qdrant Storage
@@ -404,7 +417,7 @@ When OpenClaw starts a new session:
 {
   "name": "memories_tr",
   "vectors": {
-    "size": 768,           # snowflake-arctic-embed2 dimension
+    "size": 1024,           # snowflake-arctic-embed2 dimension (1024, not 768)
     "distance": "Cosine"   # Similarity metric
   },
   "payload_schema": {
@@ -547,6 +560,96 @@ memories_tr → Topic Engine → topic_blocks_tr → Retrieval → Context
 ```
 
 **Note:** Gems and Blocks are **independent** addons. They both require Base, but you choose one based on your use case.
+
+---
+
+## Updating / Patching
+
+If you already have TrueRecall Base installed and need to apply a bug fix or update:
+
+### Quick Update (v1.2 Patch)
+
+**Applies to:** Session file detection fix (picks wrong file when multiple sessions active)
+
+```bash
+# 1. Backup current watcher
+cp /root/.openclaw/workspace/skills/qdrant-memory/scripts/realtime_qdrant_watcher.py \
+   /root/.openclaw/workspace/skills/qdrant-memory/scripts/realtime_qdrant_watcher.py.bak.$(date +%Y%m%d)
+
+# 2. Download latest watcher (choose one source)
+
+# Option A: From GitHub
+curl -o /root/.openclaw/workspace/skills/qdrant-memory/scripts/realtime_qdrant_watcher.py \
+  https://raw.githubusercontent.com/speedyfoxai/openclaw-true-recall-base/master/watcher/realtime_qdrant_watcher.py
+
+# Option B: From GitLab
+curl -o /root/.openclaw/workspace/skills/qdrant-memory/scripts/realtime_qdrant_watcher.py \
+  https://gitlab.com/mdkrush/true-recall-base/-/raw/master/watcher/realtime_qdrant_watcher.py
+
+# Option C: From local git (if cloned)
+cp /path/to/true-recall-base/watcher/realtime_qdrant_watcher.py \
+  /root/.openclaw/workspace/skills/qdrant-memory/scripts/
+
+# 3. Stop old watcher
+pkill -f realtime_qdrant_watcher
+
+# 4. Start new watcher
+python3 /root/.openclaw/workspace/skills/qdrant-memory/scripts/realtime_qdrant_watcher.py --daemon
+
+# 5. Verify
+ps aux | grep watcher
+lsof -p $(pgrep -f realtime_qdrant_watcher) | grep jsonl
+```
+
+### Update with Git (If Cloned)
+
+```bash
+cd /path/to/true-recall-base
+git pull origin master
+
+# Copy updated files
+cp watcher/realtime_qdrant_watcher.py \
+   /root/.openclaw/workspace/skills/qdrant-memory/scripts/
+
+# Copy optional: backfill script
+cp scripts/backfill_memory_to_q.py \
+   /root/.openclaw/workspace/skills/qdrant-memory/scripts/ 2>/dev/null || true
+
+# Restart watcher
+sudo systemctl restart mem-qdrant-watcher
+# OR manually:
+pkill -f realtime_qdrant_watcher
+python3 /root/.openclaw/workspace/skills/qdrant-memory/scripts/realtime_qdrant_watcher.py --daemon
+```
+
+### Verify Update Applied
+
+```bash
+# Check version in file
+grep "v1.2" /root/.openclaw/workspace/skills/qdrant-memory/scripts/realtime_qdrant_watcher.py
+
+# Verify watcher is running
+ps aux | grep realtime_qdrant_watcher
+
+# Confirm watching main session (not subagent)
+lsof -p $(pgrep -f realtime_qdrant_watcher) | grep jsonl
+
+# Check recent captures in Qdrant
+curl -s "http://10.0.0.40:6333/collections/memories_tr/points/scroll" \
+  -H "Content-Type: application/json" \
+  -d '{"limit": 3, "with_payload": true}' | jq -r '.result.points[].payload.timestamp'
+```
+
+### What's New in v1.2
+
+| Feature | Benefit |
+|---------|---------|
+| **Priority-based session detection** | Always picks `agent:main:main` first |
+| **Lock file validation** | Ignores stale/crashed session locks via PID check |
+| **Inactive subagent filtering** | Skips sessions with `sessionFile=null` |
+| **Backfill script** | Import historical memories from markdown files |
+
+**No config changes required** - existing `config.json` works unchanged.
 
 ---
 
