@@ -61,7 +61,7 @@ true-recall-base (REQUIRED)
     │   ├── Curator extracts gems → gems_tr
     │   └── Plugin injects gems into prompts
     │
-    └──▶ true-recall-blocks (ADDON)
+    └──▶ openclaw-true-recall-blocks (ADDON)
         ├── Topic clustering → topic_blocks_tr
         └── Contextual block retrieval
 
@@ -654,3 +654,108 @@ curl -s "http://10.0.0.40:6333/collections/memories_tr/points/scroll" \
 ---
 
 **Prerequisite for:** TrueRecall Gems, TrueRecall Blocks
+
+
+---
+
+## Upgrading from Older Versions
+
+This section covers full upgrades from older TrueRecall Base installations to the current version.
+
+### Version History
+
+| Version | Key Changes |
+|---------|-------------|
+| **v1.0** | Initial release - basic watcher |
+| **v1.1** | Session detection improvements |
+| **v1.2** | Priority-based session detection, lock file validation, backfill script |
+| **v1.3** | Offset persistence (resumes from last position), fixes duplicate processing |
+| **v1.4** | Current version - Memory backfill fix (Qdrant ids field), improved error handling |
+
+### Upgrade Paths
+
+#### From v1.0/v1.1/v1.2 → v1.4 (Current)
+
+If you have an older installation, follow these steps:
+
+```bash
+# Step 1: Backup existing configuration
+cp /root/.openclaw/workspace/skills/qdrant-memory/scripts/realtime_qdrant_watcher.py    /root/.openclaw/workspace/skills/qdrant-memory/scripts/realtime_qdrant_watcher.py.bak.$(date +%Y%m%d)
+
+cp /root/.openclaw/workspace/skills/qdrant-memory/scripts/config.json    /root/.openclaw/workspace/skills/qdrant-memory/scripts/config.json.bak.$(date +%Y%m%d)
+```
+
+```bash
+# Step 2: Stop the watcher
+pkill -f realtime_qdrant_watcher
+# Verify stopped
+ps aux | grep realtime_qdrant_watcher
+```
+
+```bash
+# Step 3: Download latest files (choose one source)
+
+# Option A: From GitLab (recommended)
+curl -o /root/.openclaw/workspace/skills/qdrant-memory/scripts/realtime_qdrant_watcher.py   https://gitlab.com/mdkrush/openclaw-true-recall-base/-/raw/master/watcher/realtime_qdrant_watcher.py
+
+# Option B: From Gitea
+curl -o /root/.openclaw/workspace/skills/qdrant-memory/scripts/realtime_qdrant_watcher.py   http://10.0.0.61:3000/SpeedyFoxAi/openclaw-true-recall-base/raw/branch/master/watcher/realtime_qdrant_watcher.py
+
+# Option C: From local clone (if you cloned the repo)
+cp /path/to/openclaw-true-recall-base/watcher/realtime_qdrant_watcher.py    /root/.openclaw/workspace/skills/qdrant-memory/scripts/
+```
+
+```bash
+# Step 4: Start the watcher
+python3 /root/.openclaw/workspace/skills/qdrant-memory/scripts/realtime_qdrant_watcher.py --daemon
+```
+
+```bash
+# Step 5: Verify installation
+ps aux | grep realtime_qdrant_watcher
+curl -s "http://10.0.0.40:6333/collections/memories_tr/points/scroll"   -H "Content-Type: application/json" -d '{"limit": 3}' | jq '.result.points[0].payload.timestamp'
+```
+
+### Upgrading with Git (If You Cloned the Repository)
+
+```bash
+# Navigate to your clone
+cd /path/to/openclaw-true-recall-base
+git pull origin master
+
+# Stop current watcher
+pkill -f realtime_qdrant_watcher
+
+# Copy updated files to OpenClaw
+cp watcher/realtime_qdrant_watcher.py /root/.openclaw/workspace/skills/qdrant-memory/scripts/
+cp scripts/backfill_memory.py /root/.openclaw/workspace/skills/qdrant-memory/scripts/
+
+# Restart the watcher
+python3 /root/.openclaw/workspace/skills/qdrant-memory/scripts/realtime_qdrant_watcher.py --daemon
+
+# Verify
+ps aux | grep realtime_qdrant_watcher
+```
+
+### Backfilling Historical Memories (Optional)
+
+```bash
+python3 /root/.openclaw/workspace/skills/qdrant-memory/scripts/backfill_memory.py
+```
+
+### Verifying Your Upgrade
+
+```bash
+# 1. Check watcher is running
+ps aux | grep realtime_qdrant_watcher
+
+# 2. Verify source is "true-recall-base"
+curl -s "http://10.0.0.40:6333/collections/memories_tr/points/scroll"   -H "Content-Type: application/json" -d '{"limit": 1}' | jq '.result.points[0].payload.source'
+
+# 3. Check date coverage
+curl -s "http://10.0.0.40:6333/collections/memories_tr/points/scroll"   -H "Content-Type: application/json" -d '{"limit": 10000}' | jq '[.result.points[].payload.date] | unique | sort'
+```
+
+Expected output:
+- Source: `"true-recall-base"`
+- Dates: Array from oldest to newest memory

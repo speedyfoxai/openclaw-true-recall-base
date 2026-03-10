@@ -19,7 +19,7 @@ true-recall-base (REQUIRED FOUNDATION)
     │   ├── Curator extracts atomic gems
     │   └── Plugin injects gems as context
     │
-    └──▶ true-recall-blocks (OPTIONAL ADDON)
+    └──▶ openclaw-true-recall-blocks (OPTIONAL ADDON)
         ├── Topic clustering
         └── Block-based retrieval
 ```
@@ -82,4 +82,4 @@ curl -s http://10.0.0.40:6333/collections/memories_tr | jq '.result.points_count
 
 ---
 
-*Next: Install true-recall-gems OR true-recall-blocks (not both)*
+*Next: Install true-recall-gems OR openclaw-true-recall-blocks (not both)*
