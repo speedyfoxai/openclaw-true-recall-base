@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """
-TrueRecall v1.2 - Real-time Qdrant Watcher
+TrueRecall v1.3 - Real-time Qdrant Watcher
 Monitors OpenClaw sessions and stores to memories_tr instantly.
 
 This is the CAPTURE component. For curation and injection, install v2.
 
 Changelog:
+- v1.3: Fixed crash loop (2551 restarts/24h) from FileNotFoundError on deleted session files.
+        Added chunking for long content (6000 char chunks) to prevent embedding token overflow.
+        Improved error handling for session file lifecycle.
 - v1.2: Fixed session rotation bug - added inactivity detection (30s threshold)
         and improved file scoring to properly detect new sessions on /new or /reset
 - v1.1: Added 1-second mtime polling for session rotation
