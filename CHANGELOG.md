@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.4] - 2026-03-13
+
+### Fixed
+
+#### Real-Time Logging Not Visible in journalctl
+
+**Error:** Watcher was capturing turns to Qdrant but `journalctl -u mem-qdrant-watcher -f` showed no output between restarts.
+
+**Root Cause:**
+- Python buffers stdout when not connected to a TTY (systemd service)
+- `print()` statements in the watcher were buffered, not flushed
+- Logs only appeared on service restart when buffer was flushed
+
+**Impact:** Impossible to monitor real-time capture status, difficult to debug
+
+**Fix:**
+- Added `Environment="PYTHONUNBUFFERED=1"` to systemd service file
+- This disables Python's stdout buffering, forcing immediate flush
+
+**Changed Files:**
+- `watcher/mem-qdrant-watcher.service` - Added PYTHONUNBUFFERED environment variable
+
+**Validation:**
+```bash
+journalctl -u mem-qdrant-watcher -f
+# Now shows: ✅ Turn 170 (assistant) → Qdrant (in real-time)
+```
+
+---
+
 ## [v1.3] - 2026-03-10
 
 ### Fixed

@@ -11,6 +11,7 @@ Environment="QDRANT_COLLECTION=memories_tr"
 Environment="OLLAMA_URL=http://localhost:11434"
 Environment="EMBEDDING_MODEL=snowflake-arctic-embed2"
 Environment="USER_ID=rob"
+Environment="PYTHONUNBUFFERED=1"
 ExecStart=/usr/bin/python3 /root/.openclaw/workspace/.local_projects/openclaw-true-recall-base/watcher/realtime_qdrant_watcher.py --daemon
 Restart=always
 RestartSec=5
